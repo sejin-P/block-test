@@ -9,15 +9,12 @@ import (
 )
 
 // NewHandler creates an sdk.Handler for all the nameservice type messages
-func NewHandler(k Keeper) sdk.Handler {
+func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 		switch msg := msg.(type) {
-		// TODO: Define your msg cases
-		// 
-		//Example:
-		// case Msg<Action>:
-		// 	return handleMsg<Action>(ctx, k, msg)
+		case MsgSetName:
+			return handleMsgSetName(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", ModuleName,  msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
@@ -26,8 +23,8 @@ func NewHandler(k Keeper) sdk.Handler {
 }
 
 // handle<Action> does x
-func handleMsg<Action>(ctx sdk.Context, k Keeper, msg Msg<Action>) (*sdk.Result, error) {
-	err := k.<Action>(ctx, msg.ValidatorAddr)
+func handleMsgSetName(ctx sdk.Context, keeper Keeper, msg MsgSetName) (*sdk.Result, error) {
+	err := keeper.SetName(ctx, msg.ValidatorAddr)
 	if err != nil {
 		return nil, err
 	}
